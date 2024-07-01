@@ -1,0 +1,32 @@
+*{
+    margin: 0%;
+    padding: 0%;
+    color: white;
+}
+#navbar{
+    background-color:#0f1111;
+    height: 60px;
+    
+}
+*{
+    color: white;
+}
+#div{
+    height: 100px;
+    width: 100px;
+    background-color: green;
+    border-radius: 50%;
+}
+#amazon{
+    font-size: 25px;
+    color: #f08804;
+    margin-right: 200px;
+
+}
+#search-btn{
+    background-color: #f08804;
+}
+a{
+    margin-right: 200px;
+    text-decoration: none;
+}
