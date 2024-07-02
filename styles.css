@@ -30,3 +30,11 @@ a{
     margin-right: 200px;
     text-decoration: none;
 }
+div{
+    width: 45px;
+    height: 48px;
+    padding: 25px;
+    margin: 25px;
+    background-color:rgb(145, 215, 225);
+    text-align: center;
+}
