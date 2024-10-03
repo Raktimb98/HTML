@@ -1,28 +1,65 @@
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; /* Full height of the viewport */
-    border: 1px solid black; /* Just for visual reference */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 20px;
 }
 
-.centered-div {
-    height: 200px;
-    width: 200px;
-    border-radius: 50%; 
-    border: 20px solid #B4A6AB;
-    border-top:20px solid #946E83;
-    animation-name: spin;
-    animation-duration: 1s;
-    animation-delay: 0ms;
-    animation-iteration-count: infinite;
-    animation-timing-function: ease-in-out;
+h1 {
+    text-align: center;
+    font-size: 2em;
 }
-@keyframes spin{
-    from{
-        transform: rotate(0deg);
-    }
-    to{
-        transform: rotate(360deg);
-    }
+
+/* Index Page */
+body.index-page {
+    background-color: #f0f8ff;
+}
+
+a {
+    color: #333;
+    text-decoration: none;
+    font-size: 1.2em;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Ordered List Page */
+body.ordered-page {
+    background-color: #ffe4e1;
+}
+
+/* Unordered List Page */
+body.unordered-page {
+    background-color: #f5f5dc;
+}
+
+/* Nested List Page */
+body.nested-page {
+    background-color: #e6e6fa;
+}
+
+/* Definition List Page */
+body.definition-page {
+    background-color: #fafad2;
+}
+
+ol {
+    font-size: 1.2em;
+}
+
+ul {
+    font-size: 1.2em;
+}
+
+dl {
+    font-size: 1.2em;
+}
+
+dt {
+    font-weight: bold;
+}
+
+dd {
+    margin-left: 20px;
 }
