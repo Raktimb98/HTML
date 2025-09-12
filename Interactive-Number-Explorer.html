@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Number Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Slate & Indigo -->
+    <!-- Application Structure Plan: Designed a single-view interactive dashboard. A slider controls the selected number (1-40). This updates three display cards (Number, Square, Cube) and a bar chart for visual comparison. This is more engaging than a static table and clarifies the exponential growth. A final section contains the original scrollable data table for reference. This structure prioritizes interactive exploration over static data presentation. -->
+    <!-- Visualization & Content Choices: 1. Number Selection: Range slider -> Goal: Input -> Justification: Interactive and intuitive. 2. Key Values: HTML cards -> Goal: Inform -> Justification: Clear, focused display. 3. Comparison: Bar Chart (Chart.js) -> Goal: Compare -> Justification: Visualizes the rapid growth of squares and cubes. 4. Full Data: HTML Table -> Goal: Organize/Inform -> Justification: Provides a complete, scrollable reference. This approach uses JS to dynamically link all components for a cohesive experience. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 40vh;
+            max-height: 450px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #4f46e5;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        input[type=range]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: #4f46e5;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-200 transition-colors duration-500">
+
+    <div class="container mx-auto px-4 py-8 md:py-12">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white">Interactive Number Explorer</h1>
+            <p class="mt-2 text-lg text-slate-600 dark:text-slate-300">Explore the relationship between numbers, squares, and cubes.</p>
+            <button id="darkModeToggle" class="absolute top-4 right-4 p-2 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white transition-colors duration-500">
+                <span id="darkModeIcon" class="text-xl">🌙</span>
+            </button>
+        </header>
+
+        <main class="space-y-12">
+            
+            <!-- Interactive Controls Section -->
+            <section class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-md border border-slate-200 dark:border-slate-700 transition-colors duration-500">
+                <div class="text-center mb-6">
+                     <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Select a Number</h2>
+                     <p class="text-slate-600 dark:text-slate-300">Use the slider below to select a number from 1 to 40. The cards and chart will update in real-time to show the corresponding square and cube values, helping you visualize how quickly these values grow.</p>
+                </div>
+                <div class="flex items-center justify-center space-x-4">
+                    <span class="font-semibold text-slate-600 dark:text-slate-400">1</span>
+                    <input id="numberSlider" type="range" min="1" max="40" value="1" class="w-full max-w-2xl h-3 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                    <span class="font-semibold text-slate-600 dark:text-slate-400">40</span>
+                </div>
+            </section>
+
+            <!-- Dynamic Display Cards -->
+            <section class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-md border border-slate-200 dark:border-slate-700 transition-colors duration-500">
+                    <h3 class="text-lg font-semibold text-slate-500 dark:text-slate-400">Number (n)</h3>
+                    <p id="displayNumber" class="text-5xl font-bold text-indigo-600 dark:text-indigo-400 mt-2">1</p>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-md border border-slate-200 dark:border-slate-700 transition-colors duration-500">
+                    <h3 class="text-lg font-semibold text-slate-500 dark:text-slate-400">Square (n²)</h3>
+                    <p id="displaySquare" class="text-5xl font-bold text-indigo-600 dark:text-indigo-400 mt-2">1</p>
+                </div>
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-md border border-slate-200 dark:border-slate-700 transition-colors duration-500">
+                    <h3 class="text-lg font-semibold text-slate-500 dark:text-slate-400">Cube (n³)</h3>
+                    <p id="displayCube" class="text-5xl font-bold text-indigo-600 dark:text-indigo-400 mt-2">1</p>
+                </div>
+            </section>
+            
+            <!-- Chart Section -->
+            <section class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-md border border-slate-200 dark:border-slate-700 transition-colors duration-500">
+                 <div class="text-center mb-4">
+                     <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Visual Comparison</h2>
+                     <p class="text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">This bar chart visually represents the selected number, its square, and its cube. Notice the dramatic difference in scale between the three values, especially as you select larger numbers. This demonstrates the power of exponential growth.</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="numberChart"></canvas>
+                </div>
+            </section>
+
+            <!-- Multiplication Table Section -->
+            <section class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-md border border-slate-200 dark:border-slate-700 transition-colors duration-500">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Multiplication Table</h2>
+                    <p class="text-slate-600 dark:text-slate-300">Select a number to view its multiplication table up to 40.</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <select id="multiplicationSelect" class="bg-slate-100 dark:bg-slate-700 p-2 rounded-lg mb-4 text-center w-full max-w-[200px]">
+                        <!-- Options populated by JavaScript -->
+                    </select>
+                    <div id="multiplicationTable" class="text-center text-lg font-semibold text-slate-700 dark:text-slate-300 w-full max-w-[200px] mt-4 space-y-1"></div>
+                </div>
+            </section>
+            
+            <!-- Full Data Table Section -->
+            <section class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-md border border-slate-200 dark:border-slate-700 transition-colors duration-500">
+                <div class="text-center mb-4">
+                     <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Complete Data Reference</h2>
+                     <p class="text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">For reference, the complete table of numbers, squares, and cubes from 1 to 40 is provided below. You can scroll through the data to find specific values.</p>
+                </div>
+                <div class="max-h-96 overflow-y-auto rounded-lg border border-slate-200 dark:border-slate-700">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-100 dark:bg-slate-700 sticky top-0">
+                            <tr>
+                                <th class="p-3 font-semibold">Number</th>
+                                <th class="p-3 font-semibold">Square</th>
+                                <th class="p-3 font-semibold">Cube</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTable" class="divide-y divide-slate-200 dark:divide-slate-700">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const numberData = [];
+            for (let i = 1; i <= 40; i++) {
+                const square = i * i;
+                const cube = i * i * i;
+                numberData.push({
+                    num: i,
+                    square: square,
+                    cube: cube
+                });
+            }
+
+            const slider = document.getElementById('numberSlider');
+            const displayNumber = document.getElementById('displayNumber');
+            const displaySquare = document.getElementById('displaySquare');
+            const displayCube = document.getElementById('displayCube');
+            const dataTable = document.getElementById('dataTable');
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const darkModeIcon = document.getElementById('darkModeIcon');
+            const body = document.body;
+
+            const isSystemDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            let isDarkMode = isSystemDarkMode;
+
+            const chartConfig = {
+                type: 'bar',
+                data: {
+                    labels: ['Number', 'Square', 'Cube'],
+                    datasets: [{
+                        label: 'Value',
+                        data: [1, 1, 1],
+                        backgroundColor: [
+                            'rgba(165, 180, 252, 0.6)',
+                            'rgba(129, 140, 248, 0.6)',
+                            'rgba(79, 70, 229, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(165, 180, 252, 1)',
+                            'rgba(129, 140, 248, 1)',
+                            'rgba(79, 70, 229, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString();
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: isDarkMode ? '#e2e8f0' : '#475569'
+                            },
+                            grid: {
+                                color: isDarkMode ? 'rgba(226, 232, 240, 0.1)' : 'rgba(71, 85, 105, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                           callbacks: {
+                               label: function(context) {
+                                   let label = context.dataset.label || '';
+                                   if (label) {
+                                       label += ': ';
+                                   }
+                                   if (context.parsed.y !== null) {
+                                       label += context.parsed.y.toLocaleString();
+                                   }
+                                   return label;
+                               }
+                           }
+                        }
+                    }
+                }
+            };
+            
+            const ctx = document.getElementById('numberChart').getContext('2d');
+            const numberChart = new Chart(ctx, chartConfig);
+
+            function updateChartColors(isDark) {
+                const textColor = isDark ? '#e2e8f0' : '#475569';
+                const gridColor = isDark ? 'rgba(226, 232, 240, 0.1)' : 'rgba(71, 85, 105, 0.1)';
+                
+                numberChart.options.scales.y.ticks.color = textColor;
+                numberChart.options.scales.x.ticks.color = textColor;
+                numberChart.options.scales.y.grid.color = gridColor;
+                numberChart.options.scales.x.grid.color = gridColor;
+                numberChart.update();
+            }
+
+            function updateDarkModeUI(isDark) {
+                if (isDark) {
+                    body.classList.add('dark');
+                    darkModeIcon.textContent = '☀️';
+                } else {
+                    body.classList.remove('dark');
+                    darkModeIcon.textContent = '🌙';
+                }
+                updateChartColors(isDark);
+            }
+
+            darkModeToggle.addEventListener('click', () => {
+                isDarkMode = !isDarkMode;
+                updateDarkModeUI(isDarkMode);
+            });
+            
+            updateDarkModeUI(isDarkMode);
+
+            numberData.forEach(data => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="p-3">${data.num.toLocaleString()}</td>
+                    <td class="p-3">${data.square.toLocaleString()}</td>
+                    <td class="p-3">${data.cube.toLocaleString()}</td>
+                `;
+                dataTable.appendChild(row);
+            });
+
+            function updateDisplay(value) {
+                const index = value - 1;
+                const data = numberData[index];
+
+                displayNumber.textContent = data.num.toLocaleString();
+                displaySquare.textContent = data.square.toLocaleString();
+                displayCube.textContent = data.cube.toLocaleString();
+
+                numberChart.data.datasets[0].data = [data.num, data.square, data.cube];
+                numberChart.update();
+            }
+
+            slider.addEventListener('input', (event) => {
+                updateDisplay(event.target.value);
+            });
+            
+            updateDisplay(1);
+
+            const multiplicationSelect = document.getElementById('multiplicationSelect');
+            const multiplicationTableDiv = document.getElementById('multiplicationTable');
+
+            for (let i = 1; i <= 40; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                multiplicationSelect.appendChild(option);
+            }
+
+            function updateMultiplicationTable() {
+                const selectedNumber = parseInt(multiplicationSelect.value);
+                multiplicationTableDiv.innerHTML = '';
+                for (let i = 1; i <= 40; i++) {
+                    const result = selectedNumber * i;
+                    const row = document.createElement('div');
+                    row.textContent = `${selectedNumber} x ${i} = ${result}`;
+                    multiplicationTableDiv.appendChild(row);
+                }
+            }
+
+            multiplicationSelect.addEventListener('change', updateMultiplicationTable);
+            
+            updateMultiplicationTable();
+        });
+    </script>
+</body>
+</html>
