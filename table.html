@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplication Tables (20 to 40)</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom scrollbar styling for better aesthetics */
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 8px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background-color: #a7f3d0; /* Tailwind green-200 */
+            border-radius: 20px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: #1f2937; /* Tailwind gray-800 */
+        }
+        /* Style the rows for better readability */
+        .table-row-odd {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        .table-row-even {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans min-h-screen p-4">
+
+    <div class="max-w-7xl mx-auto">
+        <header class="text-center mb-10 p-6 bg-gray-800 rounded-xl shadow-2xl">
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-green-400 mb-2">
+                Multiplication Tables Generator
+            </h1>
+            <p class="text-xl text-gray-400">Tables from 20 to 40 (Up to 10 Multiples)</p>
+        </header>
+
+        <!-- Container for the generated tables -->
+        <main id="tables-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 scrollbar-thin max-h-[80vh] overflow-y-auto pb-4">
+            <!-- Tables will be inserted here by JavaScript -->
+        </main>
+    </div>
+
+    <script>
+        // Set up constants for the range
+        const START_NUMBER = 20;
+        const END_NUMBER = 40;
+        const MULTIPLES_COUNT = 10;
+        const container = document.getElementById('tables-container');
+
+        /**
+         * Generates the HTML for a single multiplication table.
+         * @param {number} baseNumber - The number for which the table is generated.
+         * @returns {string} The HTML string for the table card.
+         */
+        function generateTableHtml(baseNumber) {
+            let tableContent = '';
+
+            for (let i = 1; i <= MULTIPLES_COUNT; i++) {
+                const product = baseNumber * i;
+                const isOdd = i % 2 !== 0;
+                const rowClass = isOdd ? 'table-row-odd' : 'table-row-even';
+
+                tableContent += `
+                    <div class="flex justify-between p-2 text-lg ${rowClass} transition duration-150 ease-in-out">
+                        <span class="font-mono">${baseNumber} &times; ${i}</span>
+                        <span class="font-bold text-green-300">= ${product}</span>
+                    </div>
+                `;
+            }
+
+            // Card structure for the single table
+            return `
+                <div class="bg-gray-800 p-4 rounded-xl shadow-lg hover:shadow-green-500/50 transform hover:scale-[1.02] transition duration-300">
+                    <h2 class="text-2xl font-semibold text-center mb-3 pb-2 border-b-2 border-green-500/50 text-white">
+                        Table of ${baseNumber}
+                    </h2>
+                    <div class="space-y-1">
+                        ${tableContent}
+                    </div>
+                </div>
+            `;
+        }
+
+        /**
+         * Main function to generate and render all tables.
+         */
+        function renderAllTables() {
+            let allTablesHtml = '';
+
+            // Loop through the entire range (20 to 40)
+            for (let num = START_NUMBER; num <= END_NUMBER; num++) {
+                allTablesHtml += generateTableHtml(num);
+            }
+
+            // Insert all generated HTML into the container
+            container.innerHTML = allTablesHtml;
+        }
+
+        // Run the function when the page loads
+        document.addEventListener('DOMContentLoaded', renderAllTables);
+    </script>
+
+</body>
+</html>
